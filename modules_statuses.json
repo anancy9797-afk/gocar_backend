@@ -1,0 +1,12 @@
+{
+    "Auth": true,
+    "Ride": true,
+    "Driver": true,
+    "Admin": true,
+    "Notification": true,
+    "Location": true,
+    "Payment": true,
+    "Tracking": true,
+    "Vehicle": true,
+    "Rider": true
+}

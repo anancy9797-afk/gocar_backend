@@ -1,0 +1,11 @@
+{
+    "name": "Ride",
+    "alias": "ride",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Ride\\Providers\\RideServiceProvider"
+    ],
+    "files": []
+}
