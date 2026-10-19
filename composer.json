@@ -13,8 +13,7 @@
     "laravel/framework": "^12.0",
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.10.1",
-    "nwidart/laravel-modules": "^12.0",
-    "tymon/jwt-auth": "^2.3"
+    "nwidart/laravel-modules": "^12.0"
   },
   "require-dev": {
     "fakerphp/faker": "^1.23",
@@ -30,9 +29,9 @@
       "App\\": "app/",
       "Modules\\": "Modules/",
       "Modules\\Auth\\": "Modules/Auth/app/",
+      "Modules\\Trip\\": "Modules/Trip/app/",
       "Modules\\Ride\\": "Modules/Ride/app/",
       "Modules\\Driver\\": "Modules/Driver/app/",
-      "Modules\\Rider\\": "Modules/Rider/app/",
       "Modules\\Vehicle\\": "Modules/Vehicle/app/",
       "Modules\\Tracking\\": "Modules/Tracking/app/",
       "Modules\\Payment\\": "Modules/Payment/app/",

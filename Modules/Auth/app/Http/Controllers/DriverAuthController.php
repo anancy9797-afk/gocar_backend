@@ -68,6 +68,7 @@ class DriverAuthController extends Controller
         'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
 
             'vehicle_number' => ['nullable', 'string'],
+            'car_type_id' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -97,6 +98,7 @@ if ($request->hasFile('image')) {
                         'email' => $request->email,
 
             'vehicle_number' => $request->vehicle_number,
+            'car_type_id' => $request->car_type_id,
             'is_active' => 0,
         ]);
 

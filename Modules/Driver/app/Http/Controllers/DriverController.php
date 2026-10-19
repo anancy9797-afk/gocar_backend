@@ -11,6 +11,19 @@ class DriverController extends Controller
     /**
      * جلب جميع السائقين للـ Admin (مع دعم البحث والتصفية والـ Pagination)
      */
+        public function inactiveDrivers()
+    {
+        $drivers = Driver::where('is_active', 0)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Inactive drivers retrieved successfully',
+            'count' => $drivers->count(),
+            'data' => $drivers,
+        ], 200);
+    }
     public function index(Request $request)
     {
         // 1. التأكد أن المستخدم الحالي هو Admin
@@ -46,6 +59,24 @@ class DriverController extends Controller
             'data' => $drivers,
         ], 200);
     }
+        public function show($id)
+    {
+    $driver = Driver::with('carType')->find($id);
+
+        if (!$driver) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Driver not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Driver retrieved successfully',
+            'data' => $driver,
+        ], 200);
+    }
+
 
 
 
@@ -57,18 +88,61 @@ class DriverController extends Controller
         return view('driver::create');
     }
 
+
+
+    public function approve($id)
+{
+    $driver = Driver::find($id);
+
+    if (!$driver) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Driver not found',
+        ], 404);
+    }
+
+    $driver->is_active = 1;
+    $driver->rejection_reason = null;
+    $driver->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Driver accepted successfully',
+        'data' => $driver,
+    ]);
+}
+
+public function reject(Request $request, $id)
+{
+    $validated = $request->validate([
+        'rejection_reason' => 'required|string|min:3|max:1000',
+    ]);
+
+    $driver = Driver::find($id);
+
+    if (!$driver) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Driver not found',
+        ], 404);
+    }
+
+    $driver->is_active = 0;
+    $driver->rejection_reason = $validated['rejection_reason'];
+    $driver->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Driver rejected successfully',
+        'data' => $driver,
+    ]);
+}
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {}
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('driver::show');
-    }
+
 
     /**
      * Show the form for editing the specified resource.

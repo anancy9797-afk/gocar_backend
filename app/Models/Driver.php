@@ -19,6 +19,7 @@ class Driver extends Authenticatable
         'vehicle_number',
         'vehicle_iamge',
         'is_active',
+        'car_type_id'
     ];
 
     protected $hidden = [
@@ -38,4 +39,12 @@ class Driver extends Authenticatable
 
         ];
     }
+    public function carType()
+{
+    return $this->belongsTo(
+        \Modules\Vehicle\Models\VehicleType::class,
+        'car_type_id'
+    );
+}
+
 }
