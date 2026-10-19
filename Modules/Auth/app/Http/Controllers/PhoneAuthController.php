@@ -175,7 +175,7 @@ public function completeProfile(Request $request)
     if (!$user || !Hash::check($request->password, $user->password) ) {
         return response()->json([
             'status' => false,
-            'message' => 'بيانات الاعتماد غير صحيحة أو ليس لديك صلاحية الدخول كمسؤول.',
+            'message' => 'بيانات الاعتماد غير صحيحة أو ليس  صلاحية الدخول كمسؤول.',
         ], 401);
     }
 
