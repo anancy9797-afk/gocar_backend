@@ -22,6 +22,6 @@ use Modules\Auth\Http\Controllers\AuthController;
 
 
 
-Route::post('/admin/loginn', [PhoneAuthController::class, 'test']);
+Route::post('/admin/loginn000', [PhoneAuthController::class, 'test']);
 
 
