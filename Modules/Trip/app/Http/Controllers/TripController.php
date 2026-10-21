@@ -26,7 +26,28 @@ public function index()
         'data' => $rides,
     ]);
 }
+public function getAllTrips(Request $request)
+    {
+        try {
+            // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
+            $trips = Trip::with(['client', 'driver', 'carType'])
+                         ->latest()
+                         ->paginate($request->get('per_page', 15)); // دعم التقسيم (Pagination) إن أردت
 
+            return response()->json([
+                'status' => true,
+                'message' => 'Trips fetched successfully',
+                'data' => $trips
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to fetch trips',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
