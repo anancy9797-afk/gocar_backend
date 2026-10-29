@@ -1,0 +1,42 @@
+<?php
+
+namespace Modules\Auth\app\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
+
+class PhoneAuthController extends Controller
+{
+    public function adminLogin(Request $request)
+    {
+        $allAdmins = Admin::pluck('phone')->toArray();
+        $user = Admin::where('phone', $request->phone)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'رقم الهاتف غير موجود',
+                'searched_phone' => $request->phone,
+                'available_phones_in_db' => $allAdmins
+            ], 401);
+        }
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'كلمة المرور غير مطابقة'
+            ], 401);
+        }
+
+        $token = $user->createToken('AdminToken')->plainTextToken;
+
+        return response()->json([
+            'status' => true,
+            'message' => 'تم تسجيل الدخول بنجاح',
+            'token' => $token,
+        ], 200);
+    }
+}
+EOF 2>&1

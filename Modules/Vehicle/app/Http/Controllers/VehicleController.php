@@ -5,7 +5,7 @@ namespace Modules\Vehicle\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Vehicle\Models\VehicleType;
-
+use Illuminate\Support\Facades\Validator;
 class VehicleController extends Controller
 {
     /**

@@ -13,12 +13,12 @@ Route::middleware('auth:admin')->prefix('v1/admin')->group(function () {
 
 
 
-Route::patch('/v1/admin/drivers/{id}/approve', [
+Route::post('/v1/admin/drivers/{id}/approve', [
     DriverController::class,
     'approve',
 ]);
 
-Route::patch('/v1/admin/drivers/{id}/reject', [
+Route::post('/v1/admin/drivers/{id}/reject', [
     DriverController::class,
     'reject',
 ]);
