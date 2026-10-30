@@ -10,7 +10,10 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 Route::middleware('auth:admin')->prefix('v1/admin')->group(function () {
     Route::get('/drivers/{id}', [DriverController::class, 'show']);
 });
-
+Route::post('/drivers/availability', [
+    DriverController::class,
+    'toggleAvailability'
+]);
 
 
 Route::post('/v1/admin/drivers/{id}/approve', [

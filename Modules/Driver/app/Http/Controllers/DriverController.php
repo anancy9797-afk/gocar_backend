@@ -24,6 +24,25 @@ class DriverController extends Controller
             'data' => $drivers,
         ], 200);
     }
+    public function toggleAvailability(Request $request)
+{
+    $request->validate([
+        'is_available' => 'required|boolean',
+    ]);
+
+    $driver = $request->user();
+
+    $driver->is_available = $request->boolean('is_available');
+    $driver->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Driver availability updated successfully',
+        'data' => [
+            'is_available' => $driver->is_available,
+        ],
+    ]);
+}
     public function index(Request $request)
     {
         // 1. التأكد أن المستخدم الحالي هو Admin
