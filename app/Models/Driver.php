@@ -19,7 +19,10 @@ class Driver extends Authenticatable
         'vehicle_number',
         'vehicle_iamge',
         'is_active',
-        'car_type_id'
+        'car_type_id',
+        'latitude',
+'longitude',
+'is_available',
     ];
 
     protected $hidden = [
@@ -36,6 +39,7 @@ class Driver extends Authenticatable
     {
         return [
                     'is_active' => 'boolean',
+    'is_available' => 'boolean',
 
         ];
     }
