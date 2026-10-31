@@ -180,4 +180,24 @@ public function reject(Request $request, $id)
      * Remove the specified resource from storage.
      */
     public function destroy($id) {}
+    public function updateLocation(Request $request)
+{
+    $request->validate([
+        'latitude' => 'required|numeric|between:-90,90',
+        'longitude' => 'required|numeric|between:-180,180',
+    ]);
+
+    $driver = $request->user(); // Authenticated driver via Sanctum/Passport
+    
+    $driver->update([
+        'latitude' => $request->latitude,
+        'longitude' => $request->longitude,
+        'last_location_updated_at' => now(),
+    ]);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Location updated successfully'
+    ]);
+}
 }

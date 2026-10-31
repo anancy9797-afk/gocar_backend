@@ -9,6 +9,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         'toggleAvailability'
     ]);
     Route::apiResource('drivers', DriverController::class)->names('driver');
+    Route::post('/update-location', [DriverController::class, 'updateLocation']);
 });
 
 Route::middleware('auth:admin')->prefix('v1/admin')->group(function () {
