@@ -9,6 +9,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         'toggleAvailability'
     ]);
     Route::apiResource('drivers', DriverController::class)->names('driver');
+    Route::middleware(['throttle:10,1'])->post('/update-location', [DriverController::class, 'updateLocation']);
 });
 
 Route::middleware('auth:admin')->prefix('v1/admin')->group(function () {
@@ -35,4 +36,3 @@ Route::prefix('v1/admin')
             [DriverController::class, 'inactiveDrivers']
         );
     });
-Route::middleware(['auth:sanctum', 'throttle:10,1'])->post('/update-location', [DriverController::class, 'updateLocation']);
