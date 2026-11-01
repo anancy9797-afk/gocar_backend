@@ -199,7 +199,7 @@ public function arrivedAtPickup(Request $request, $id)
             ];
         }
 
-        $trip->status = 'arrived';
+        $trip->status = 'arrived_pickup';
         $trip->save();
 
         return [
