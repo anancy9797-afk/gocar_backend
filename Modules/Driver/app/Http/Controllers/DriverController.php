@@ -160,8 +160,58 @@ public function reject(Request $request, $id)
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {}
+    /**
+     * Store a newly created resource in storage.
+     */
+public function arrivedAtPickup(Request $request, $id)
+{
+    $driver = $request->user();
 
+    $result = DB::transaction(function () use ($id, $driver) {
 
+        $trip = Trip::where('id', $id)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$trip) {
+            return [
+                'success' => false,
+                'message' => 'Trip not found',
+                'code' => 404,
+            ];
+        }
+
+        // Make sure this trip belongs to the authenticated driver
+        if ($trip->driver_id != $driver->id) {
+            return [
+                'success' => false,
+                'message' => 'You are not authorized to update this trip',
+                'code' => 403,
+            ];
+        }
+
+        // Only accepted trips can become arrived
+        if ($trip->status !== 'accepted') {
+            return [
+                'success' => false,
+                'message' => 'Only accepted trips can be marked as arrived',
+                'code' => 422,
+            ];
+        }
+
+        $trip->status = 'arrived';
+        $trip->save();
+
+        return [
+            'success' => true,
+            'message' => 'Driver arrived at pickup location successfully',
+            'code' => 200,
+            'data' => $trip,
+        ];
+    });
+
+    return response()->json($result, $result['code']);
+}
 
     /**
      * Show the form for editing the specified resource.
