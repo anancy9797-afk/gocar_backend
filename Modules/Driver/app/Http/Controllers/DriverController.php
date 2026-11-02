@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Driver; // لا تنسَ استدعاء نموذج السائق
 use Illuminate\Support\Facades\DB;
+use Modules\Trip\Models\Trip;
 class DriverController extends Controller
 {
     /**
