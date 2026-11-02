@@ -5,7 +5,7 @@ namespace Modules\Driver\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Driver; // لا تنسَ استدعاء نموذج السائق
-
+use Illuminate\Support\Facades\DB;
 class DriverController extends Controller
 {
     /**
