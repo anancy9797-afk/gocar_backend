@@ -47,11 +47,10 @@ class Trip extends Model
         'completed_at' => 'datetime',
     ];
 
-    public function client()
-    {
-        return $this->belongsTo(User::class, 'client_id');
-    }
-
+public function client(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'client_id', 'id');
+}
     public function driver(): BelongsTo
     {
         return $this->belongsTo(Driver::class, 'driver_id');
