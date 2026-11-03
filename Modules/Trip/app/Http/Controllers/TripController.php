@@ -31,6 +31,17 @@ public function index()
 public function getAllTrips(Request $request)
 {
     try {
+      $trip = Trip::find(2);
+
+dd([
+    'trip_client_id' => $trip->client_id,
+
+    'client_relation' => $trip->client,
+
+    'user_data' => \App\Models\User::find(2),
+
+    'users_table' => (new \App\Models\User)->getTable(),
+]);
         $trips = Trip::with([
             'client',
             'driver',
