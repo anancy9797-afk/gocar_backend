@@ -12,6 +12,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::middleware(['throttle:10,1'])->post('/update-location', [DriverController::class, 'updateLocation']);
     Route::post('/driver/trips/{id}/arrived', [DriverController::class, 'arrivedAtPickup']);
     Route::post('/driver/trips/{id}/start', [DriverController::class, 'startTrip']);
+    Route::post('/driver/trips/{id}/end', [DriverController::class, 'endTrip']);
 });
 
 Route::middleware('auth:admin')->prefix('v1/admin')->group(function () {
