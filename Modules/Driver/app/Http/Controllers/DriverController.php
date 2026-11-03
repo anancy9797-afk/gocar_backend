@@ -390,7 +390,7 @@ public function markTripAsPaid(Request $request, $id)
         }
 
         $trip->status = 'paid';
-        $trip->paid_at = now();
+        $trip->completed_at = now();
         $trip->save();
 
         return [
