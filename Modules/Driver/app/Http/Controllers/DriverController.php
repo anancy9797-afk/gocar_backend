@@ -353,5 +353,55 @@ public function endTrip(Request $request, $id)
 
     return response()->json($result, $result['code']);
 }
+public function markTripAsPaid(Request $request, $id)
+{
+    $driver = $request->user();
+
+    $result = DB::transaction(function () use ($id, $driver) {
+
+        $trip = Trip::where('id', $id)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$trip) {
+            return [
+                'success' => false,
+                'message' => 'Trip not found',
+                'code' => 404,
+            ];
+        }
+
+        // Verify that this trip belongs to the authenticated driver
+        if ($trip->driver_id != $driver->id) {
+            return [
+                'success' => false,
+                'message' => 'You are not authorized to start this trip',
+                'code' => 403,
+            ];
+        }
+
+        // Only arrived trips can be started
+        if ($trip->status !== 'completed') {
+            return [
+                'success' => false,
+                'message' => 'Only completed trips can be marked as paid',
+                'code' => 422,
+            ];
+        }
+
+        $trip->status = 'paid';
+        $trip->paid_at = now();
+        $trip->save();
+
+        return [
+            'success' => true,
+            'message' => 'Trip marked as paid successfully',
+            'code' => 200,
+            'data' => $trip,
+        ];
+    });
+
+    return response()->json($result, $result['code']);
+}
 
 }
