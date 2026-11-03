@@ -26,67 +26,28 @@ public function index()
         'data' => $rides,
     ]);
 }
-
-
 public function getAllTrips(Request $request)
-{
-    try {
-      $trip = Trip::find(2);
+    {
+        try {
+            // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
+            $trips = Trip::with(['client', 'driver', 'carType'])
+                         ->latest()
+                         ->paginate($request->get('per_page', 15)); // دعم التقسيم (Pagination) إن أردت
 
-dd([
-    'trip_client_id' => $trip->client_id,
+            return response()->json([
+                'status' => true,
+                'message' => 'Trips fetched successfully',
+                'data' => $trips
+            ], 200);
 
-    'client_relation' => $trip->client,
-
-    'user_data' => \App\Models\User::find(2),
-
-    'users_table' => (new \App\Models\User)->getTable(),
-]);
-        $trips = Trip::with([
-            'client',
-            'driver',
-            'carType',
-            'statusHistory'
-        ])
-        ->latest()
-        ->paginate($request->get('per_page', 15));
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Trips fetched successfully',
-            'data' => $trips
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Failed to fetch trips',
-            'error' => $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to fetch trips',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
-// public function getAllTrips(Request $request)
-//     {
-//         try {
-//             // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
-//             $trips = Trip::with(['client', 'driver', 'carType'])
-//                          ->latest()
-//                          ->paginate($request->get('per_page', 15)); // دعم التقسيم (Pagination) إن أردت
-
-//             return response()->json([
-//                 'status' => true,
-//                 'message' => 'Trips fetched successfully',
-//                 'data' => $trips
-//             ], 200);
-
-//         } catch (\Exception $e) {
-//             return response()->json([
-//                 'status' => false,
-//                 'message' => 'Failed to fetch trips',
-//                 'error' => $e->getMessage()
-//             ], 500);
-//         }
-//     }
     /**
      * Show the form for creating a new resource.
      */
@@ -222,7 +183,7 @@ public function pendingTrips()
 
         public function allTrips()
     {
-$trips = Trip::with('driver')
+$trips = Trip::with('client', 'driver', 'carType')
     ->latest()
     ->get();
         return response()->json([
