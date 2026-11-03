@@ -340,7 +340,7 @@ public function endTrip(Request $request, $id)
         }
 
         $trip->status = 'completed';
-        $trip->ended_at = now();
+        $trip->completed_at = now();
         $trip->save();
 
         return [
