@@ -251,4 +251,57 @@ public function arrivedAtPickup(Request $request, $id)
         'message' => 'Location updated successfully'
     ]);
 }
+
+
+public function startTrip(Request $request, $id)
+{
+    $driver = $request->user();
+
+    $result = DB::transaction(function () use ($id, $driver) {
+
+        $trip = Trip::where('id', $id)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$trip) {
+            return [
+                'success' => false,
+                'message' => 'Trip not found',
+                'code' => 404,
+            ];
+        }
+
+        // Verify that this trip belongs to the authenticated driver
+        if ($trip->driver_id != $driver->id) {
+            return [
+                'success' => false,
+                'message' => 'You are not authorized to start this trip',
+                'code' => 403,
+            ];
+        }
+
+        // Only arrived trips can be started
+        if ($trip->status !== 'arrived_pickup') {
+            return [
+                'success' => false,
+                'message' => 'Only trips that have arrived at pickup can be started',
+                'code' => 422,
+            ];
+        }
+
+        $trip->status = 'in_progress';
+        $trip->started_at = now();
+        $trip->save();
+
+        return [
+            'success' => true,
+            'message' => 'Trip started successfully',
+            'code' => 200,
+            'data' => $trip,
+        ];
+    });
+
+    return response()->json($result, $result['code']);
+}
+
 }
