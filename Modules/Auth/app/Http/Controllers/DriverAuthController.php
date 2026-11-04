@@ -124,6 +124,7 @@ public function requestUpdateProfile(Request $request)
         'phone' => ['required', 'string', 'max:20', 'unique:drivers,phone,' . $driver->id],
         'vehicle_number' => ['nullable', 'string', 'max:50'],
         'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+        'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
     ]);
 
     if ($validator->fails()) {
@@ -141,6 +142,11 @@ public function requestUpdateProfile(Request $request)
         $imagePath = $request->file('image')->store('drivers_temp', 'public');
     }
 
+    $vehicleImagePath = $driver->vehicle_image;
+    if ($request->hasFile('vehicle_image')) {
+        $vehicleImagePath = $request->file('vehicle_image')->store('vehicles_temp', 'public');
+    }
+
     $pendingData = [
         'name' => $request->name,  
         'email' => $request->email,
@@ -148,6 +154,7 @@ public function requestUpdateProfile(Request $request)
         'phone' => $request->phone,
         'vehicle_number' => $request->vehicle_number,
         'image' => $imagePath,
+        'vehicle_image' => $vehicleImagePath,
     ];
 
     // تخزين البيانات في الـ Cache لمدة 10 دقائق لحين إدخال رمز التحقق
