@@ -8,5 +8,6 @@
     "Payment": true,
     "Tracking": true,
     "Vehicle": true,
-    "Trip": true
+    "Trip": true,
+    "Wallet": true
 }

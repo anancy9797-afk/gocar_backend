@@ -403,5 +403,23 @@ public function markTripAsPaid(Request $request, $id)
 
     return response()->json($result, $result['code']);
 }
+public function getMyWallet(Request $request)
+{
+    $driver = $request->user();
+
+    $wallet = $driver->wallet()->firstOrCreate(
+        [],
+        ['balance' => 0]
+    );
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Wallet balance retrieved successfully',
+        'data' => [
+            'balance' => $wallet->balance,
+            'currency' => 'EGP',
+        ],
+    ]);
+}
 
 }

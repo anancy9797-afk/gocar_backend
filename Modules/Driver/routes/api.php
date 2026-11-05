@@ -14,6 +14,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::post('/driver/trips/{id}/start', [DriverController::class, 'startTrip']);
     Route::post('/driver/trips/{id}/end', [DriverController::class, 'endTrip']);
     Route::post('/driver/trips/{id}/paid', [DriverController::class, 'markTripAsPaid']);
+    Route::post('/driver/my-wallet', [DriverController::class, 'getMyWallet']);
 });
 
 Route::middleware('auth:admin')->prefix('v1/admin')->group(function () {

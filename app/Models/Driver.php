@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\Wallet\Models\Wallet;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Driver extends Authenticatable
 {
@@ -50,5 +52,8 @@ class Driver extends Authenticatable
         'car_type_id'
     );
 }
-
+public function wallet(): MorphOne
+{
+    return $this->morphOne(Wallet::class, 'walletable');
+}
 }

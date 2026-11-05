@@ -32,6 +32,7 @@
       "Modules\\Trip\\": "Modules/Trip/app/",
       "Modules\\Ride\\": "Modules/Ride/app/",
       "Modules\\Driver\\": "Modules/Driver/app/",
+      "Modules\\Wallet\\": "Modules/Wallet/app/",
       "Modules\\Vehicle\\": "Modules/Vehicle/app/",
       "Modules\\Tracking\\": "Modules/Tracking/app/",
       "Modules\\Payment\\": "Modules/Payment/app/",
@@ -40,6 +41,7 @@
       "Modules\\Admin\\": "Modules/Admin/app/",
       "Database\\Factories\\": "database/factories/",
       "Database\\Seeders\\": "database/seeders/"
+
     }
   },
   "autoload-dev": {
