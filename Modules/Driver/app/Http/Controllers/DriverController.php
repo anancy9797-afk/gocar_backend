@@ -407,29 +407,35 @@ public function getMyWallet(Request $request)
 {
     $driver = $request->user();
 
-    // 1. Check if driver has a wallet, create if not exists
+    // 1. Check wallet or create it
     $wallet = $driver->wallet()->firstOrCreate(
         [],
         ['balance' => 0]
     );
 
-    // 2. Calculate total price of all paid trips
-    $balance = Trip::where('driver_id', $driver->id)
+    // 2. Get all paid trips for this driver
+    $trips = Trip::where('driver_id', $driver->id)
         ->where('status', 'paid')
-        ->sum('price');
+        ->latest()
+        ->get();
 
-    // 3. Update wallet balance
+    // 3. Calculate total price
+    $balance = $trips->sum('price');
+
+    // 4. Update wallet balance
     $wallet->update([
         'balance' => $balance
     ]);
 
-    // 4. Return wallet data
+    // 5. Return wallet and trips
     return response()->json([
         'success' => true,
         'message' => 'Wallet balance retrieved successfully',
         'data' => [
             'balance' => round((float) $wallet->balance, 2),
             'currency' => 'EGP',
+            'trips_count' => $trips->count(),
+            'trips' => $trips,
         ],
     ]);
 }
