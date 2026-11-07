@@ -1,29 +1,22 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace Modules\Wallet\Models;
 
-return new class extends Migration
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+class Wallet extends Model
 {
-    public function up(): void
+    protected $fillable = [
+        'balance',
+    ];
+
+    protected $casts = [
+        'balance' => 'decimal:2',
+    ];
+
+    public function walletable(): MorphTo
     {
-        Schema::create('wallets', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('driver_id')
-                ->unique()
-                ->constrained('drivers')
-                ->cascadeOnDelete();
-
-            $table->decimal('balance', 10, 2)->default(0);
-
-            $table->timestamps();
-        });
+        return $this->morphTo();
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('wallets');
-    }
-};
+}

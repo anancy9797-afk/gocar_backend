@@ -52,8 +52,18 @@ class Driver extends Authenticatable
         'car_type_id'
     );
 }
+
+
+
 public function wallet(): MorphOne
 {
     return $this->morphOne(Wallet::class, 'walletable');
 }
+
+
+
+
+
+
+
 }
