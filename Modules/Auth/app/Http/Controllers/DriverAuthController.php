@@ -158,15 +158,44 @@ public function requestUpdateProfile(Request $request)
     // مفتاح الكاش يعتمد على معرف السائق
     $cacheKey = 'pending_driver_update_' . $driver->id;
     
-    $imagePath = $driver->image;
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('drivers_temp', 'public');
+// Handle Profile Image
+$imagePath = $driver->image;
+
+if ($request->hasFile('image')) {
+    $file = $request->file('image');
+
+    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+    $destinationPath = public_path('uploads/profiles_temp');
+
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0775, true);
     }
 
-    $vehicleImagePath = $driver->vehicle_image;
-    if ($request->hasFile('vehicle_image')) {
-        $vehicleImagePath = $request->file('vehicle_image')->store('vehicles_temp', 'public');
+    $file->move($destinationPath, $filename);
+
+    $imagePath = 'uploads/profiles_temp/' . $filename;
+}
+
+
+// Handle Vehicle Image
+$vehicleImagePath = $driver->vehicle_image;
+
+if ($request->hasFile('vehicle_image')) {
+    $file = $request->file('vehicle_image');
+
+    $filename = 'vehicle_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+    $destinationPath = public_path('uploads/vehicles_temp');
+
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0775, true);
     }
+
+    $file->move($destinationPath, $filename);
+
+    $vehicleImagePath = 'uploads/vehicles_temp/' . $filename;
+}
 
     $pendingData = [
         'name' => $request->name,  
