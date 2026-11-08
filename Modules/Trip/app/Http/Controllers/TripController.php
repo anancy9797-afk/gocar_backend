@@ -184,19 +184,19 @@ public function pendingTrips()
 
         public function allTrips()
     {
-                dd([
-        'user' => $request->user(),
-        'user_class' => get_class($request->user()),
-        'user_id' => $request->user()->id ?? null,
-    ]);
-$trips = Trip::with('client', 'driver', 'carType')
-    ->latest()
-    ->get();
+        $driver = $request->user();
+        $trips = Trip::with(['client', 'driver', 'carType'])
+            ->where('driver_id', $driver->id)
+            ->latest()
+            ->paginate($request->get('per_page', 15));
+
+// $trips = Trip::with('client', 'driver', 'carType')
+//     ->latest()
+//     ->get();
         return response()->json([
             'status' => true,
-            'message' => 'All trips retrieved successfully.',
-            'count' => $trips->count(),
-            'data' => $trips,
+            'message' => 'Driver trips fetched successfully',
+            'data' => $trips
         ], 200);
     }
 
