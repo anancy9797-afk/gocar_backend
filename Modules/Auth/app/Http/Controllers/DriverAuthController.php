@@ -68,7 +68,7 @@ class DriverAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
         'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
-
+'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'], // Validation for vehicle image
             'vehicle_number' => ['nullable', 'string'],
             'car_type_id' => ['nullable', 'string'],
         ]);
@@ -94,11 +94,25 @@ if ($request->hasFile('image')) {
     $imagePath = 'uploads/profiles_temp/' . $filename;
 }
 
+$vehicleImagePath = $driver->vehicle_image ?? null; // Ensure you have this column in your drivers table
+        if ($request->hasFile('vehicle_image')) {
+            $vehicleFile = $request->file('vehicle_image');
+            $vehicleFilename = 'vehicle_' . time() . '_' . uniqid() . '.' . $vehicleFile->getClientOriginalExtension();
+
+            $vehicleDestinationPath = public_path('uploads/vehicles_temp');
+            if (!file_exists($vehicleDestinationPath)) {
+                mkdir($vehicleDestinationPath, 0775, true);
+            }
+
+            $vehicleFile->move($vehicleDestinationPath, $vehicleFilename);
+            $vehicleImagePath = 'uploads/vehicles_temp/' . $vehicleFilename;
+        }
+
         $driver->update([
             'name' => $request->name,
             'image' => $imagePath,
                         'email' => $request->email,
-
+'vehicle_image' => $vehicleImagePath, // Save vehicle image path
             'vehicle_number' => $request->vehicle_number,
             'car_type_id' => $request->car_type_id,
             'is_active' => 0,
