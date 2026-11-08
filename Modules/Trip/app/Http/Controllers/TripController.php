@@ -29,10 +29,13 @@ public function index()
 public function getAllTrips(Request $request)
     {
         try {
+                  $driver = $request->user();
+
             // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
-            $trips = Trip::with(['client', 'driver', 'carType'])
-                         ->latest()
-                         ->paginate($request->get('per_page', 15)); // دعم التقسيم (Pagination) إن أردت
+        $trips = Trip::with(['client', 'driver', 'carType'])
+            ->where('driver_id', $driver->id)
+            ->latest()
+            ->paginate($request->get('per_page', 15));
 
             return response()->json([
                 'status' => true,
