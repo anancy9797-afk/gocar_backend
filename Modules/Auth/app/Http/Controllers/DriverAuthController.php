@@ -63,14 +63,7 @@ class DriverAuthController extends Controller
      */
 public function completeProfile(Request $request)
     {
-      dd([
-    'content_length' => $_SERVER['CONTENT_LENGTH'] ?? null,
-    'post' => $_POST,
-    'files' => $_FILES,
-    'has_image' => $request->hasFile('image'),
-    'image_error' => $_FILES['image']['error'] ?? null,
-    'image_size' => $_FILES['image']['size'] ?? null,
-]);
+      
         $driver = $request->user();
 
         $validator = Validator::make($request->all(), [
