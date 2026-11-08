@@ -27,30 +27,55 @@ public function index()
     ]);
 }
 public function getAllTrips(Request $request)
-    {
-        try {
-                  $driver = $request->user();
+{
+    try {
+        // السائق المسجل دخوله حالياً
+        $driver = $request->user();
 
-            // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
         $trips = Trip::with(['client', 'driver', 'carType'])
             ->where('driver_id', $driver->id)
             ->latest()
             ->paginate($request->get('per_page', 15));
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Trips fetched successfully',
-                'data' => $trips
-            ], 200);
+        return response()->json([
+            'status' => true,
+            'message' => 'Driver trips fetched successfully',
+            'data' => $trips
+        ], 200);
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to fetch trips',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to fetch trips',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+// public function getAllTrips(Request $request)
+//     {
+//         try {
+//                   $driver = $request->user();
+
+//             // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
+//         $trips = Trip::with(['client', 'driver', 'carType'])
+//             ->where('driver_id', $driver->id)
+//             ->latest()
+//             ->paginate($request->get('per_page', 15));
+
+//             return response()->json([
+//                 'status' => true,
+//                 'message' => 'Trips fetched successfully',
+//                 'data' => $trips
+//             ], 200);
+
+//         } catch (\Exception $e) {
+//             return response()->json([
+//                 'status' => false,
+//                 'message' => 'Failed to fetch trips',
+//                 'error' => $e->getMessage()
+//             ], 500);
+//         }
+//     }
     /**
      * Show the form for creating a new resource.
      */
