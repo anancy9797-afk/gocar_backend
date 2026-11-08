@@ -61,14 +61,15 @@ class DriverAuthController extends Controller
     /**
      * استكمال بيانات السائق
      */
-    public function completeProfile(Request $request)
+public function completeProfile(Request $request)
     {
-        $driver = $request->user(); // تأكد من ربط الـ Guard الخاص بالـ Driver في Sanctum
+        $driver = $request->user();
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-        'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
-'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'], // Validation for vehicle image
+            'email' => ['nullable', 'email', 'max:255', 'unique:drivers,email,' . $driver->id], // Fixed to drivers table and ignore current id
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:4096'],
             'vehicle_number' => ['nullable', 'string'],
             'car_type_id' => ['nullable', 'string'],
         ]);
@@ -80,21 +81,23 @@ class DriverAuthController extends Controller
             ], 422);
         }
 
+        // Handle Profile Image
         $imagePath = $driver->image;
-if ($request->hasFile('image')) {
-    $file = $request->file('image');
-    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-    $destinationPath = public_path('uploads/profiles_temp');
-    if (!file_exists($destinationPath)) {
-        mkdir($destinationPath, 0775, true);
-    }
+            $destinationPath = public_path('uploads/profiles_temp');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0775, true);
+            }
 
-    $file->move($destinationPath, $filename);
-    $imagePath = 'uploads/profiles_temp/' . $filename;
-}
+            $file->move($destinationPath, $filename);
+            $imagePath = 'uploads/profiles_temp/' . $filename;
+        }
 
-$vehicleImagePath = $driver->vehicle_image ?? null; // Ensure you have this column in your drivers table
+        // Handle Vehicle Image
+        $vehicleImagePath = $driver->vehicle_image;
         if ($request->hasFile('vehicle_image')) {
             $vehicleFile = $request->file('vehicle_image');
             $vehicleFilename = 'vehicle_' . time() . '_' . uniqid() . '.' . $vehicleFile->getClientOriginalExtension();
@@ -110,9 +113,9 @@ $vehicleImagePath = $driver->vehicle_image ?? null; // Ensure you have this colu
 
         $driver->update([
             'name' => $request->name,
+            'email' => $request->email,
             'image' => $imagePath,
-                        'email' => $request->email,
-'vehicle_image' => $vehicleImagePath, // Save vehicle image path
+            'vehicle_image' => $vehicleImagePath,
             'vehicle_number' => $request->vehicle_number,
             'car_type_id' => $request->car_type_id,
             'is_active' => 0,
@@ -126,7 +129,6 @@ $vehicleImagePath = $driver->vehicle_image ?? null; // Ensure you have this colu
             'driver' => $driver,
         ]);
     }
-
 
 public function requestUpdateProfile(Request $request)
 {
