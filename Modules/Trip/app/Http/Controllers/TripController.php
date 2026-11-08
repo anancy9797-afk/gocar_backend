@@ -228,8 +228,6 @@ public function allTrips(Request $request)
 //     }
 
 
-use Illuminate\Http\Request;
-use App\Models\Trip;
 
 public function weeklyPaidTrips(Request $request)
 {
