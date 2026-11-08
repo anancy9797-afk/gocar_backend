@@ -182,23 +182,44 @@ public function pendingTrips()
      * Show the specified resource.
      */
 
-        public function allTrips()
-    {
+
+public function allTrips(Request $request)
+{
+    try {
         $driver = $request->user();
+
         $trips = Trip::with(['client', 'driver', 'carType'])
             ->where('driver_id', $driver->id)
             ->latest()
             ->paginate($request->get('per_page', 15));
 
-// $trips = Trip::with('client', 'driver', 'carType')
-//     ->latest()
-//     ->get();
         return response()->json([
             'status' => true,
             'message' => 'Driver trips fetched successfully',
             'data' => $trips
         ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to fetch trips',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
+//         public function allTrips()
+//     {
+// $trips = Trip::with('client', 'driver', 'carType')
+//     ->latest()
+//     ->get();
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'All trips retrieved successfully.',
+//             'count' => $trips->count(),
+//             'data' => $trips,
+//         ], 200);
+//     }
 
 
 
