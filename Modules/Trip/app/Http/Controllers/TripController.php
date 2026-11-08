@@ -29,6 +29,11 @@ public function index()
 public function getAllTrips(Request $request)
 {
     try {
+         dd([
+        'user' => $request->user(),
+        'user_class' => get_class($request->user()),
+        'user_id' => $request->user()->id ?? null,
+    ]);
         // السائق المسجل دخوله حالياً
         $driver = $request->user();
 
