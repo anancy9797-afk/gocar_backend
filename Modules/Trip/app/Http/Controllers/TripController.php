@@ -29,11 +29,7 @@ public function index()
 public function getAllTrips(Request $request)
     {
         try {
-              dd([
-        'user' => $request->user(),
-        'user_class' => get_class($request->user()),
-        'user_id' => $request->user()->id ?? null,
-    ]);
+    
             // جلب جميع الرحلات مع بيانات العميل أو السائق المرتبطة بها (Eager Loading)
             $trips = Trip::with(['client', 'driver', 'carType'])
                          ->latest()
@@ -188,6 +184,11 @@ public function pendingTrips()
 
         public function allTrips()
     {
+                dd([
+        'user' => $request->user(),
+        'user_class' => get_class($request->user()),
+        'user_id' => $request->user()->id ?? null,
+    ]);
 $trips = Trip::with('client', 'driver', 'carType')
     ->latest()
     ->get();
