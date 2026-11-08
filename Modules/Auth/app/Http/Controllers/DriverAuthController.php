@@ -173,7 +173,11 @@ if ($request->hasFile('image')) {
     }
 
     $file->move($destinationPath, $filename);
-
+\Log::info('Vehicle image uploaded', [
+    'filename' => $filename,
+    'path' => $vehicleImagePath,
+    'exists' => file_exists($destinationPath . '/' . $filename),
+]);
     $imagePath = 'uploads/profiles_temp/' . $filename;
 }
 
