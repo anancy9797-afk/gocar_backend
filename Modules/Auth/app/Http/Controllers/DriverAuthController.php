@@ -173,11 +173,7 @@ if ($request->hasFile('image')) {
     }
 
     $file->move($destinationPath, $filename);
-\Log::info('Vehicle image uploaded', [
-    'filename' => $filename,
-    'path' => $vehicleImagePath,
-    'exists' => file_exists($destinationPath . '/' . $filename),
-]);
+
     $imagePath = 'uploads/profiles_temp/' . $filename;
 }
 
@@ -199,6 +195,11 @@ if ($request->hasFile('vehicle_image')) {
     $file->move($destinationPath, $filename);
 
     $vehicleImagePath = 'uploads/vehicles_temp/' . $filename;
+    \Log::info('Vehicle image uploaded', [
+            'filename' => $filename,
+            'path' => $vehicleImagePath,
+            'exists' => file_exists($destinationPath . '/' . $filename),
+        ]);
 }
 
     $pendingData = [
