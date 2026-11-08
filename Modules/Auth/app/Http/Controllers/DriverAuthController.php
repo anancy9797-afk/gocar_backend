@@ -68,8 +68,10 @@ public function completeProfile(Request $request)
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', 'unique:drivers,email,' . $driver->id], // Fixed to drivers table and ignore current id
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:4096'],
+            'image' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'], // Changed from 'image' to 'file'
+    'vehicle_image' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,webp', 'max:4096'], // Changed from 'image' to 'file'
+            // 'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            // 'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:4096'],
             'vehicle_number' => ['nullable', 'string'],
             'car_type_id' => ['nullable', 'string'],
         ]);
