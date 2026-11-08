@@ -234,22 +234,28 @@ public function weeklyPaidTrips(Request $request)
     try {
         $driver = $request->user();
 
+        // All paid trips (without date filter)
+        $allPaidQuery = Trip::where('driver_id', $driver->id)
+            ->where('status', 'paid');
+
+        $totalPaidPriceAllTime = (clone $allPaidQuery)->sum('price');
+
+        $totalPaidTripsAllTime = (clone $allPaidQuery)->count();
+
         // Current week: Monday to Sunday
         $startOfWeek = now()->startOfWeek();
         $endOfWeek = now()->endOfWeek();
 
-        // Common filters
-        $query = Trip::where('driver_id', $driver->id)
-            ->where('status', 'paid')
-            ->whereBetween('created_at', [
-                $startOfWeek,
-                $endOfWeek
-            ]);
+        // Current week paid trips
+        $query = (clone $allPaidQuery)->whereBetween('created_at', [
+            $startOfWeek,
+            $endOfWeek
+        ]);
 
-        // Calculate total paid price
         $totalPaidPrice = (clone $query)->sum('price');
 
-        // Get all paid trips this week
+        $totalPaidTrips = (clone $query)->count();
+
         $trips = (clone $query)
             ->with(['client', 'carType'])
             ->latest()
@@ -257,13 +263,20 @@ public function weeklyPaidTrips(Request $request)
 
         return response()->json([
             'status' => true,
-            'message' => 'Weekly paid trips fetched successfully',
+            'message' => 'Paid trips summary fetched successfully',
             'data' => [
                 'driver_id' => $driver->id,
+
+                // All time
+                'total_paid_price_all_time' => (float) $totalPaidPriceAllTime,
+                'total_paid_trips_all_time' => $totalPaidTripsAllTime,
+
+                // Current week
                 'week_start' => $startOfWeek->toDateString(),
                 'week_end' => $endOfWeek->toDateString(),
                 'total_paid_price' => (float) $totalPaidPrice,
-                'total_paid_trips' => (clone $query)->count(),
+                'total_paid_trips' => $totalPaidTrips,
+
                 'trips' => $trips
             ]
         ], 200);
@@ -271,7 +284,7 @@ public function weeklyPaidTrips(Request $request)
     } catch (\Exception $e) {
         return response()->json([
             'status' => false,
-            'message' => 'Failed to fetch weekly paid trips',
+            'message' => 'Failed to fetch paid trips',
             'error' => $e->getMessage()
         ], 500);
     }
