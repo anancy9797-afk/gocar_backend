@@ -228,7 +228,56 @@ public function allTrips(Request $request)
 //     }
 
 
+use Illuminate\Http\Request;
+use App\Models\Trip;
 
+public function weeklyPaidTrips(Request $request)
+{
+    try {
+        $driver = $request->user();
+
+        // Current week: Monday to Sunday
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+
+        // Common filters
+        $query = Trip::where('driver_id', $driver->id)
+            ->where('status', 'paid')
+            ->whereBetween('created_at', [
+                $startOfWeek,
+                $endOfWeek
+            ]);
+
+        // Calculate total paid price
+        $totalPaidPrice = (clone $query)->sum('price');
+
+        // Get all paid trips this week
+        $trips = (clone $query)
+            ->with(['client', 'carType'])
+            ->latest()
+            ->paginate($request->get('per_page', 15));
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Weekly paid trips fetched successfully',
+            'data' => [
+                'driver_id' => $driver->id,
+                'week_start' => $startOfWeek->toDateString(),
+                'week_end' => $endOfWeek->toDateString(),
+                'total_paid_price' => (float) $totalPaidPrice,
+                'total_paid_trips' => (clone $query)->count(),
+                'trips' => $trips
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to fetch weekly paid trips',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
     public function acceptTrip(Request $request, $id)
 {
     $driver = $request->user();
