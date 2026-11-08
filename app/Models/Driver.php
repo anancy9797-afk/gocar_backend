@@ -19,7 +19,7 @@ class Driver extends Authenticatable
         'email',
         'image',
         'vehicle_number',
-        'vehicle_iamge',
+        'vehicle_image',
         'is_active',
         'car_type_id',
         'latitude',
