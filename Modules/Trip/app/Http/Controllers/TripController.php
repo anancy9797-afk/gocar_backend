@@ -189,13 +189,19 @@ public function allTrips(Request $request)
         $driver = $request->user();
 
         $trips = Trip::with(['client', 'driver', 'carType'])
-            ->where('driver_id', $driver->id)
+            ->where(function ($query) use ($driver) {
+                $query->where('driver_id', $driver->id)
+                    ->orWhere(function ($q) {
+                        $q->whereNull('driver_id')
+                          ->where('status', 'pending');
+                    });
+            })
             ->latest()
             ->paginate($request->get('per_page', 15));
 
         return response()->json([
             'status' => true,
-            'message' => 'Driver trips fetched successfully',
+            'message' => 'Trips fetched successfully',
             'data' => $trips
         ], 200);
 
