@@ -17,6 +17,10 @@ Route::middleware('auth:sanctum')->get(
     'driver/trips',
     [TripController::class, 'allTrips']
 );
+Route::middleware('auth:sanctum')->get(
+    'trips',
+    [TripController::class, 'allTrips']
+);
     Route::post(
         'driver/trips/{id}/accept',
         [TripController::class, 'acceptTrip']
