@@ -183,10 +183,49 @@ public function pendingTrips()
      */
 
 
+// public function allTrips(Request $request)
+// {
+//     try {
+//         $driver = $request->user();
+
+//         $trips = Trip::with(['client', 'driver', 'carType'])
+//             ->where(function ($query) use ($driver) {
+//                 $query->where('driver_id', $driver->id)
+//                     ->orWhere(function ($q) {
+//                         $q->whereNull('driver_id')
+//                           ->where('status', 'pending');
+//                     });
+//             })
+//             ->latest()
+//             ->paginate($request->get('per_page', 15));
+
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'Trips fetched successfully',
+//             'data' => $trips
+//         ], 200);
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Failed to fetch trips',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
 public function allTrips(Request $request)
 {
     try {
         $driver = $request->user();
+
+        $request->validate([
+            'status' => [
+                'nullable',
+                'in:pending,accepted,arrived_pickup,in_progress,completed,paid'
+            ],
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
 
         $trips = Trip::with(['client', 'driver', 'carType'])
             ->where(function ($query) use ($driver) {
@@ -195,6 +234,9 @@ public function allTrips(Request $request)
                         $q->whereNull('driver_id')
                           ->where('status', 'pending');
                     });
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
             })
             ->latest()
             ->paginate($request->get('per_page', 15));
