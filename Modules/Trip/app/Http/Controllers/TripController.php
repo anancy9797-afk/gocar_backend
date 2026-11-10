@@ -240,7 +240,7 @@ public function allTrips(Request $request)
                   });
             });
 
-        } elseif ($user->getTable() === 'clients') {
+        } elseif ($user->getTable() === 'users') {
 
             // Client: only own trips
             $query->where('client_id', $user->id);
