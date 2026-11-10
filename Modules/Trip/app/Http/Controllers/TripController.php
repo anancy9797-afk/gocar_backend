@@ -217,7 +217,7 @@ public function pendingTrips()
 public function allTrips(Request $request)
 {
     try {
-        $driver = $request->user();
+        $user = $request->user();
 
         $request->validate([
             'status' => [
@@ -227,18 +227,37 @@ public function allTrips(Request $request)
             'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
-        $trips = Trip::with(['client', 'driver', 'carType'])
-            ->where(function ($query) use ($driver) {
-                $query->where('driver_id', $driver->id)
-                    ->orWhere(function ($q) {
-                        $q->whereNull('driver_id')
-                          ->where('status', 'pending');
-                    });
-            })
-            ->when($request->filled('status'), function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->latest()
+        $query = Trip::with(['client', 'driver', 'carType']);
+
+        if ($user->getTable() === 'drivers') {
+
+            // Driver: own trips + available pending trips
+            $query->where(function ($q) use ($user) {
+                $q->where('driver_id', $user->id)
+                  ->orWhere(function ($subQuery) {
+                      $subQuery->whereNull('driver_id')
+                               ->where('status', 'pending');
+                  });
+            });
+
+        } elseif ($user->getTable() === 'clients') {
+
+            // Client: only own trips
+            $query->where('client_id', $user->id);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized user type'
+            ], 403);
+        }
+
+        // Filter by status
+        $query->when($request->filled('status'), function ($q) use ($request) {
+            $q->where('status', $request->status);
+        });
+
+        $trips = $query->latest()
             ->paginate($request->get('per_page', 15));
 
         return response()->json([
