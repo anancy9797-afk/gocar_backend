@@ -355,6 +355,18 @@ public function endTrip(Request $request, $id)
 }
 public function markTripAsPaid(Request $request, $id)
 {
+      $validator = Validator::make($request->all(), [
+        'paidprice' => ['required', 'numeric', 'min:0'],
+        'resaidpricee' => ['required', 'numeric', 'min:0'],
+    ]);
+        if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation error',
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
     $driver = $request->user();
 
     $result = DB::transaction(function () use ($id, $driver) {
@@ -388,6 +400,8 @@ public function markTripAsPaid(Request $request, $id)
                 'code' => 422,
             ];
         }
+                $trip->paidprice = $request->paidprice;
+        $trip->resaidpricee = $request->resaidpricee;
 
         $trip->status = 'paid';
         $trip->completed_at = now();
