@@ -129,6 +129,45 @@ public function index(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {}
-}
+/**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $vehicleType = VehicleType::find($id);
+
+            if (!$vehicleType) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Vehicle type not found',
+                ], 404);
+            }
+
+            // Delete the physical image file if it exists
+            if ($vehicleType->image) {
+                $imagePath = public_path($vehicleType->image);
+                if (file_exists($imagePath)) {
+                    @unlink($imagePath); // Delete file safely
+                }
+            }
+
+            // Delete the record from the database
+            $vehicleType->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Vehicle type deleted successfully',
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ], 500);
+        }
+    }
+    }
 
