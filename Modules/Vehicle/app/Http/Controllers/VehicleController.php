@@ -124,7 +124,92 @@ public function index(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) {}
+
+public function update(Request $request, $id)
+{
+    try {
+        $vehicleType = VehicleType::find($id);
+
+        if (!$vehicleType) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Vehicle type not found',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:255|unique:vehicle_types,name,' . $id,
+            'description' => 'nullable|string',
+            'price_per_kilo' => 'sometimes|required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Update text fields only if they were sent
+        if ($request->has('name')) {
+            $vehicleType->name = $request->name;
+        }
+
+        if ($request->has('description')) {
+            $vehicleType->description = $request->description;
+        }
+
+        if ($request->has('price_per_kilo')) {
+            $vehicleType->price_per_kilo = $request->price_per_kilo;
+        }
+
+        // Replace image only if a new one was uploaded
+        $oldImage = $vehicleType->image;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            $filename = time() . '_' . uniqid() . '.' .
+                $file->getClientOriginalExtension();
+
+            $destinationPath = public_path('uploads/vehicle_types');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0775, true);
+            }
+
+            $file->move($destinationPath, $filename);
+
+            $vehicleType->image = 'uploads/vehicle_types/' . $filename;
+        }
+
+        $vehicleType->save();
+
+        // Delete old image after the new record has been saved
+        if ($request->hasFile('image') && $oldImage) {
+            $oldImagePath = public_path($oldImage);
+
+            if (file_exists($oldImagePath)) {
+                @unlink($oldImagePath);
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Vehicle type updated successfully',
+            'data' => $vehicleType->fresh(),
+        ], 200);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => false,
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+}
 
     /**
      * Remove the specified resource from storage.
