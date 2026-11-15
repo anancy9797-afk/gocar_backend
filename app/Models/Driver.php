@@ -53,12 +53,14 @@ class Driver extends Authenticatable
     );
 }
 
-
-
-public function wallet(): MorphOne
+public function wallet()
 {
-    return $this->morphOne(Wallet::class, 'walletable');
+    return $this->morphOne(
+        \Modules\Wallet\Models\Wallet::class,
+        'walletable'
+    );
 }
+
 
 
 
