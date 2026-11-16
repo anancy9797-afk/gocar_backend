@@ -274,7 +274,28 @@ public function allTrips(Request $request)
         ], 500);
     }
 }
+public function getTripsByDriverId($id)
+{
+    try {
+        $trips = Trip::with(['client', 'carType'])
+            ->where('driver_id', $id)
+            ->latest()
+            ->paginate(request()->get('per_page', 15)); // دعم التقسيم (Pagination) إن أردت
 
+        return response()->json([
+            'status' => true,
+            'message' => 'Trips for the specified driver retrieved successfully.',
+            'count' => $trips->count(),
+            'data' => $trips,
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to retrieve trips for the specified driver.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
 //         public function allTrips()
 //     {
 // $trips = Trip::with('client', 'driver', 'carType')
