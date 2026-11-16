@@ -26,6 +26,10 @@ Route::post('/v1/admin/drivers/{id}/approve', [
     DriverController::class,
     'approve',
 ]);
+Route::post('/v1/admin/drivers/{id}/suspend', [
+    DriverController::class,
+    'suspend',
+]);
 
 Route::post('/v1/admin/drivers/{id}/reject', [
     DriverController::class,

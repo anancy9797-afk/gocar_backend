@@ -148,7 +148,25 @@ public function getDriverById($id)
     }
 
 
+public function suspend($id)
+{
+    $driver = Driver::find($id);
+    if (!$driver) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Driver not found',
+        ], 404);
+    }
 
+    $driver->is_active = 0;
+    $driver->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Driver suspended successfully',
+        'data' => $driver,
+    ], 200);
+}
 
     /**
      * Show the form for creating a new resource.
