@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Modules\Trip\App\Models\Trip; // تأكدي من المسار الصحيح لموديل Trip
+
 use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
@@ -53,4 +55,8 @@ class User extends Authenticatable
 
         ];
     }
+    public function trips()
+{
+    return $this->hasMany(Trip::class, 'client_id');
+}
 }
