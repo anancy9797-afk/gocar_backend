@@ -158,7 +158,7 @@ public function suspend($id)
         ], 404);
     }
 
-    $driver->is_active = 0;
+    $driver->is_active = !$driver->is_active;
     $driver->save();
 
     return response()->json([
