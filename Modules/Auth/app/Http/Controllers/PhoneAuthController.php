@@ -231,7 +231,7 @@ public function getAllClients(Request $request)
 public function changePassword(Request $request)
 {
     $admin = $request->user();
-
+dd($admin);
     if (!$admin || !($admin instanceof Admin)) {
         return response()->json([
             'status' => false,
