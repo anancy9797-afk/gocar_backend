@@ -335,4 +335,27 @@ public function changePassword(Request $request)
 }
 
 
+
+
+
+
+
+public function getClientById($id)
+{
+    $client = User::withCount('trips')->find($id);
+
+    if (!$client) {
+        return response()->json([
+            'status' => false,
+            'message' => 'العميل غير موجود',
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'تم جلب بيانات العميل بنجاح',
+        'data' => $client,
+    ], 200);
+}
+
 }

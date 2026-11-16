@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // مسارات الأدمن
     Route::get('/admin/clients', [PhoneAuthController::class, 'getAllClients']);
+    Route::get('/admin/client/{id}', [PhoneAuthController::class, 'getClientById']);
 });
 
 // --- المسارات المحمية (خاصة بالسائقين فقط) ---
