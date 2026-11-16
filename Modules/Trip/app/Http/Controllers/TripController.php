@@ -437,7 +437,8 @@ public function weeklyPaidTrips(Request $request)
      * Remove the specified resource from storage.
      */
     public function destroy($id) {}
-    public function getTripsByClientId($id)
+    public function getTripsByClientId(Request $request, $id)
+
     {
         try {
             $trips = Trip::with(['driver', 'carType'])
