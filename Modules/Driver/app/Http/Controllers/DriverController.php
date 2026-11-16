@@ -44,41 +44,72 @@ class DriverController extends Controller
         ],
     ]);
 }
-    public function index(Request $request)
-    {
-        // 1. التأكد أن المستخدم الحالي هو Admin
+
+public function index(Request $request)
+{
+    $query = Driver::query()->withCount('trips');
+
+    // Search
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('phone', 'like', "%{$search}%")
+              ->orWhere('vehicle_number', 'like', "%{$search}%");
+        });
+    }
+
+    // Filter by approval status
+    if ($request->has('is_active')) {
+        $query->where('is_active', $request->is_active);
+    }
+
+    $perPage = $request->get('per_page', 15);
+
+    $drivers = $query->latest()->paginate($perPage);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'تم جلب قائمة السائقين بنجاح',
+        'data' => $drivers,
+    ], 200);
+}
+    // public function index(Request $request)
+    // {
+    //     // 1. التأكد أن المستخدم الحالي هو Admin
   
 
-        // 2. بناء الاستعلام من جدول السائقين
-        $query = Driver::query();
+    //     // 2. بناء الاستعلام من جدول السائقين
+    //     $query = Driver::query();
 
-        // 3. تفعيل البحث بالاسم، رقم الهاتف، أو رقم المركبة
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('vehicle_number', 'like', "%{$search}%");
-            });
-        }
+    //     // 3. تفعيل البحث بالاسم، رقم الهاتف، أو رقم المركبة
+    //     if ($request->has('search') && !empty($request->search)) {
+    //         $search = $request->search;
+    //         $query->where(function ($q) use ($search) {
+    //             $q->where('name', 'like', "%{$search}%")
+    //               ->orWhere('phone', 'like', "%{$search}%")
+    //               ->orWhere('vehicle_number', 'like', "%{$search}%");
+    //         });
+    //     }
 
-        // 4. تصفية النتائج حسب حالة الاعتماد (اختياري: ?is_active=0 أو ?is_active=1)
-        if ($request->has('is_active')) {
-            $query->where('is_active', $request->is_active);
-        }
+    //     // 4. تصفية النتائج حسب حالة الاعتماد (اختياري: ?is_active=0 أو ?is_active=1)
+    //     if ($request->has('is_active')) {
+    //         $query->where('is_active', $request->is_active);
+    //     }
 
-        // 5. تحديد عدد العناصر في كل صفحة (الافتراضي 15)
-        $perPage = $request->get('per_page', 15);
+    //     // 5. تحديد عدد العناصر في كل صفحة (الافتراضي 15)
+    //     $perPage = $request->get('per_page', 15);
         
-        // 6. جلب البيانات وترتيبها من الأحدث
-        $drivers = $query->latest()->paginate($perPage);
+    //     // 6. جلب البيانات وترتيبها من الأحدث
+    //     $drivers = $query->latest()->paginate($perPage);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'تم جلب قائمة السائقين بنجاح',
-            'data' => $drivers,
-        ], 200);
-    }
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'تم جلب قائمة السائقين بنجاح',
+    //         'data' => $drivers,
+    //     ], 200);
+    // }
         public function show($id)
     {
     $driver = Driver::with('carType')->find($id);
