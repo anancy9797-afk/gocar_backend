@@ -231,8 +231,16 @@ public function getAllClients(Request $request)
 public function changePassword(Request $request)
 {
     $admin = $request->user();
-dd($admin);
-    if (!$admin || !($admin instanceof Admin)) {
+    dd([
+        'bearer_token_received' => !empty($request->bearerToken()),
+
+        'sanctum_user' => auth('sanctum')->user(),
+
+        'tokenable_type' => \DB::table('personal_access_tokens')
+            ->where('tokenable_id', 4)
+            ->value('tokenable_type'),
+    ]);
+        if (!$admin || !($admin instanceof Admin)) {
         return response()->json([
             'status' => false,
             'message' => 'Unauthenticated',
