@@ -416,4 +416,27 @@ public function weeklyPaidTrips(Request $request)
      * Remove the specified resource from storage.
      */
     public function destroy($id) {}
+    public function getTripsByClientId($id)
+    {
+        try {
+            $trips = Trip::with(['driver', 'carType'])
+                ->where('client_id', $id)
+                ->latest()   
+                    ->paginate($request->get('per_page', 15)); // دعم التقسيم (Pagination) إن أردت
+
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Trips for the specified client retrieved successfully.',
+                'count' => $trips->count(),
+                'data' => $trips,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to retrieve trips for the specified client.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

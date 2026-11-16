@@ -25,4 +25,8 @@ Route::middleware('auth:sanctum')->get(
         'driver/trips/{id}/accept',
         [TripController::class, 'acceptTrip']
     );
+        Route::post(
+        'driver/trips/clients/{id}',
+        [TripController::class, 'getTripsByClientId']
+    );
 });
