@@ -8,7 +8,6 @@ use Modules\Auth\Http\Controllers\AuthController;
 // --- المسارات العامة ---
 Route::post('/auth/check-phone', [PhoneAuthController::class, 'checkPhone']);
 Route::post('/admin/login', [PhoneAuthController::class, 'adminLogin']);
-Route::post('/admin/change-password', [PhoneAuthController::class, 'changePassword']);
 
 // مسارات السائق العامة (تسجيل الدخول/التحقق)
 Route::post('/driver/check-phone', [DriverAuthController::class, 'checkPhone']);
@@ -24,6 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // --- المسارات المحمية (خاصة بالسائقين فقط) ---
 Route::middleware('auth:sanctum')->group(function () {
+  Route::post('/admin/change-password', [PhoneAuthController::class, 'changePassword']);
+
     Route::post('/driver/complete-profile', [DriverAuthController::class, 'completeProfile']);
     Route::get('/driver/profile/me', [DriverAuthController::class, 'me']);
     Route::post('/driver/profile/request-update', [DriverAuthController::class, 'requestUpdateProfile']);
