@@ -26,11 +26,11 @@ Route::middleware('auth:sanctum')->get(
         [TripController::class, 'acceptTrip']
     );
         Route::get(
-        'driver/trips/clients/{id}',
+        'admin/trips/client/{id}',
         [TripController::class, 'getTripsByClientId']
     );
             Route::get(
-        'driver/trips/drivers/{id}',
+        'admin/trips/driver/{id}',
         [TripController::class, 'getTripsByDriverId']
     );
 });
