@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Modules\Wallet\Models\Wallet;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Modules\Trip\Models\Trip;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class Driver extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
