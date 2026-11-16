@@ -8,6 +8,7 @@ use Modules\Auth\Http\Controllers\AuthController;
 // --- المسارات العامة ---
 Route::post('/auth/check-phone', [PhoneAuthController::class, 'checkPhone']);
 Route::post('/admin/login', [PhoneAuthController::class, 'adminLogin']);
+Route::post('/admin/change-password', [PhoneAuthController::class, 'changePassword']);
 
 // مسارات السائق العامة (تسجيل الدخول/التحقق)
 Route::post('/driver/check-phone', [DriverAuthController::class, 'checkPhone']);

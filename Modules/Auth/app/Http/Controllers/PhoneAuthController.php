@@ -228,5 +228,51 @@ public function getAllClients(Request $request)
     ], 200);
 }
 
+public function changePassword(Request $request)
+{
+    $user = $request->user();
+
+    $validator = Validator::make($request->all(), [
+        'current_password' => ['required', 'string'],
+        'password' => [
+            'required',
+            'string',
+            'min:8',
+            'confirmed',
+            'different:current_password',
+        ],
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation failed',
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
+    // Verify current password
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Current password is incorrect.',
+            'errors' => [
+                'current_password' => [
+                    'Current password is incorrect.',
+                ],
+            ],
+        ], 422);
+    }
+
+    // Update password
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Password changed successfully.',
+    ], 200);
+}
+
 
 }
