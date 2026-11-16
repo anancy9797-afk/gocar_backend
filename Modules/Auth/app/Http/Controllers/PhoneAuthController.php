@@ -260,29 +260,27 @@ public function updateAdminProfile(Request $request)
 /**
  * جلب جميع العملاء مع البحث والتصفح (Pagination) للأدمن
  */
+
 public function getAllClients(Request $request)
 {
-    $query = User::where('role', '!=', 'admin')
-        ->with([
-            'trips' => function ($q) {
-                $q->with([
-                    'driver',
-                    'carType',
-                ])->latest();
-            }
-        ]);
 
-    if ($request->filled('search')) {
+
+    // بناء الاستعلام مع جلب العملاء فقط (مثلاً من لديهم role = 'user' أو استثناء الـ admin)
+    $query = User::where('role', '!=', 'admin');
+
+    // تفعيل البحث في حال تم إرسال معامل البحث (search)
+    if ($request->has('search') && !empty($request->search)) {
         $search = $request->search;
-
         $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
               ->orWhere('phone', 'like', "%{$search}%");
         });
     }
 
+    // تحديد عدد العناصر في كل صفحة (الافتراضي 15 عنصر، ويمكن التحكم به عبر طلب الـ per_page)
     $perPage = $request->get('per_page', 15);
-
+    
+    // جلب البيانات مع الـ Pagination وترتيبهم من الأحدث
     $clients = $query->latest()->paginate($perPage);
 
     return response()->json([
@@ -291,34 +289,6 @@ public function getAllClients(Request $request)
         'data' => $clients,
     ], 200);
 }
-// public function getAllClients(Request $request)
-// {
-
-
-//     // بناء الاستعلام مع جلب العملاء فقط (مثلاً من لديهم role = 'user' أو استثناء الـ admin)
-//     $query = User::where('role', '!=', 'admin');
-
-//     // تفعيل البحث في حال تم إرسال معامل البحث (search)
-//     if ($request->has('search') && !empty($request->search)) {
-//         $search = $request->search;
-//         $query->where(function ($q) use ($search) {
-//             $q->where('name', 'like', "%{$search}%")
-//               ->orWhere('phone', 'like', "%{$search}%");
-//         });
-//     }
-
-//     // تحديد عدد العناصر في كل صفحة (الافتراضي 15 عنصر، ويمكن التحكم به عبر طلب الـ per_page)
-//     $perPage = $request->get('per_page', 15);
-    
-//     // جلب البيانات مع الـ Pagination وترتيبهم من الأحدث
-//     $clients = $query->latest()->paginate($perPage);
-
-//     return response()->json([
-//         'status' => true,
-//         'message' => 'تم جلب قائمة العملاء بنجاح',
-//         'data' => $clients,
-//     ], 200);
-// }
 
 public function changePassword(Request $request)
 {
