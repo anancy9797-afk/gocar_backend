@@ -159,7 +159,69 @@ public function completeProfile(Request $request)
         ]);
         }
 
+public function updateAdminProfile(Request $request)
+{
+    // جلب الأدمن المسجل دخوله بالتوكن الحالي
+    $admin = auth('sanctum')->user();
 
+    if (!$admin || !$admin instanceof Admin) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Unauthenticated',
+        ], 401);
+    }
+
+    $validator = Validator::make($request->all(), [
+        'name' => ['required', 'string', 'max:255'],
+        'phone' => [
+            'required',
+            'string',
+            'max:20',
+            'unique:admins,phone,' . $admin->id,
+        ],
+        'email' => [
+            'nullable',
+            'email',
+            'max:255',
+            'unique:admins,email,' . $admin->id,
+        ],
+        'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
+    $imagePath = $admin->image;
+
+    if ($request->hasFile('image')) {
+        // حذف الصورة القديمة
+        if ($admin->image) {
+            Storage::disk('public')->delete($admin->image);
+        }
+
+        // حفظ الصورة الجديدة
+        $imagePath = $request->file('image')->store('admins', 'public');
+    }
+
+    $admin->update([
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'email' => $request->email,
+        'image' => $imagePath,
+    ]);
+
+    $admin->refresh();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'تم تحديث بيانات الأدمن بنجاح',
+        'admin' => $admin,
+    ]);
+}
 
     public function adminLogin(Request $request)
 {

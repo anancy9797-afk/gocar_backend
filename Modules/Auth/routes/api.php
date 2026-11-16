@@ -24,7 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
 // --- المسارات المحمية (خاصة بالسائقين فقط) ---
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/admin/change-password', [PhoneAuthController::class, 'changePassword']);
-
+    Route::post('admin/update-profile',[PhoneAuthController::class, 'updateAdminProfile']
+    );
     Route::post('/driver/complete-profile', [DriverAuthController::class, 'completeProfile']);
     Route::get('/driver/profile/me', [DriverAuthController::class, 'me']);
     Route::post('/driver/profile/request-update', [DriverAuthController::class, 'requestUpdateProfile']);
