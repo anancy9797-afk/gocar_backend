@@ -263,6 +263,7 @@ public function updateAdminProfile(Request $request)
 public function getAllClients(Request $request)
 {
     $query = User::where('role', '!=', 'admin')
+        ->withCount('trips')
         ->with([
             'trips' => function ($q) {
                 $q->with([
