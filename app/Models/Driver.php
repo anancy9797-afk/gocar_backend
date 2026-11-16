@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Wallet\Models\Wallet;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Modules\Trip\Models\Trip;
 
 class Driver extends Authenticatable
 {
@@ -66,6 +67,9 @@ public function wallet()
 
 
 
-
+public function trips(): HasMany
+{
+    return $this->hasMany(Trip::class, 'driver_id');
+}
 
 }
