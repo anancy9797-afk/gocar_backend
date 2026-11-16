@@ -231,7 +231,7 @@ public function getAllClients(Request $request)
 public function changePassword(Request $request)
 {
     $admin = auth('sanctum')->user();
-    if (!$admin || !($admin instanceof Admin)) {
+    if (!$admin ) {
         return response()->json([
             'status' => false,
             'message' => 'Unauthenticated',
