@@ -75,6 +75,25 @@ public function index(Request $request)
         'data' => $drivers,
     ], 200);
 }
+public function getDriverById($id)
+{
+    $driver = Driver::with('carType')->withCount('trips')->find($id);
+    if (!$driver) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Driver not found',
+        ], 404);
+    }
+        return response()->json([
+        'status' => true,
+        'message' => 'تم جلب بيانات السائق بنجاح',
+        'data' => $driver,
+    ], 200);
+}
+
+    
+
+
     // public function index(Request $request)
     // {
     //     // 1. التأكد أن المستخدم الحالي هو Admin
@@ -112,7 +131,7 @@ public function index(Request $request)
     // }
         public function show($id)
     {
-    $driver = Driver::with('carType')->find($id);
+    $driver = Driver::with('carType')->withCount('trips')->find($id);
 
         if (!$driver) {
             return response()->json([

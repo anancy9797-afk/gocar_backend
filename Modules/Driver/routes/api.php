@@ -31,6 +31,10 @@ Route::post('/v1/admin/drivers/{id}/reject', [
     DriverController::class,
     'reject',
 ]);
+Route::get('/v1/admin/drivers/{id}', [
+    DriverController::class,
+    'getDriverById',
+]);
 
 Route::prefix('v1/admin')
     ->middleware('auth:admin')
