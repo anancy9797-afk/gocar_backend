@@ -266,7 +266,7 @@ public function getAllClients(Request $request)
 
 
     // بناء الاستعلام مع جلب العملاء فقط (مثلاً من لديهم role = 'user' أو استثناء الـ admin)
-    $query = User::where('role', '!=', 'admin');
+    $query = User::where('role', '!=', 'admin')->withCount('trips');
 
     // تفعيل البحث في حال تم إرسال معامل البحث (search)
     if ($request->has('search') && !empty($request->search)) {
