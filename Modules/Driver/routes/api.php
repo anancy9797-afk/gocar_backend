@@ -5,6 +5,7 @@ use Modules\Driver\Http\Controllers\DriverController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
   Route::get('/driver/my-wallet', [DriverController::class, 'getMyWallet']);
+  Route::get('/admin/drivers/{driverId}/wallet', [DriverController::class, 'driverWallet']);
 
       Route::post('/drivers/availability', [DriverController::class,'toggleAvailability' ]);
     Route::apiResource('drivers', DriverController::class)->names('driver');

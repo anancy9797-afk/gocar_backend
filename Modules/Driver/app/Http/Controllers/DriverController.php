@@ -453,5 +453,26 @@ public function getMyWallet(Request $request)
         ],
     ]);
 }
+        /**
+     * Get wallet by driver ID.
+     */
+    public function driverWallet($driverId)
+    {
+        $driver = Driver::with('wallet')->findOrFail($driverId);
+
+        $wallet = $driver->wallet;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Driver wallet retrieved successfully',
+            'data' => [
+                'driver_id' => $driver->id,
+                'driver_name' => $driver->name,
+                'wallet' => $wallet,
+                'balance' => (float) ($wallet?->balance ?? 0),
+            ],
+        ], 200);
+    }
+
 
 }
