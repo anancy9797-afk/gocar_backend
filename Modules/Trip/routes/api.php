@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get(
         'driver/trips/clients/{id}',
         [TripController::class, 'getTripsByClientId']
     );
-            Route::post(
+            Route::get(
         'driver/trips/drivers/{id}',
         [TripController::class, 'getTripsByDriverId']
     );
